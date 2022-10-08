@@ -1,0 +1,10 @@
+D:\VSProjects\Handwritten_recognition_6\Handwritten_recognition_6\bin\Debug\Handwritten_recognition_6.exe.config
+D:\VSProjects\Handwritten_recognition_6\Handwritten_recognition_6\bin\Debug\Handwritten_recognition_6.exe
+D:\VSProjects\Handwritten_recognition_6\Handwritten_recognition_6\bin\Debug\Handwritten_recognition_6.pdb
+D:\VSProjects\Handwritten_recognition_6\Handwritten_recognition_6\obj\Debug\Handwritten_recognition_6.csproj.AssemblyReference.cache
+D:\VSProjects\Handwritten_recognition_6\Handwritten_recognition_6\obj\Debug\Handwritten_recognition_6.Form1.resources
+D:\VSProjects\Handwritten_recognition_6\Handwritten_recognition_6\obj\Debug\Handwritten_recognition_6.Properties.Resources.resources
+D:\VSProjects\Handwritten_recognition_6\Handwritten_recognition_6\obj\Debug\Handwritten_recognition_6.csproj.GenerateResource.cache
+D:\VSProjects\Handwritten_recognition_6\Handwritten_recognition_6\obj\Debug\Handwritten_recognition_6.csproj.CoreCompileInputs.cache
+D:\VSProjects\Handwritten_recognition_6\Handwritten_recognition_6\obj\Debug\Handwritten_recognition_6.exe
+D:\VSProjects\Handwritten_recognition_6\Handwritten_recognition_6\obj\Debug\Handwritten_recognition_6.pdb
