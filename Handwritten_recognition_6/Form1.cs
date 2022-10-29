@@ -13,73 +13,23 @@ using System.Windows.Forms;
 
 namespace Handwritten_recognition_6
 {
+
 	public partial class Form1 : Form
 	{
-
 		int lenght = 512;
 		int weight = 512;
+
 		public Form1()
 		{
 			InitializeComponent();
 
 		}
-		public static Image Crop(Image image, Rectangle selection)
-		{
-			Bitmap bmp = image as Bitmap;
 
-			// Check if it is a bitmap:
-			if (bmp == null)
-				throw new ArgumentException("No valid bitmap");
-
-			// Crop the image:
-			Bitmap cropBmp = bmp.Clone(selection, bmp.PixelFormat);
-
-			// Release the resources:
-			image.Dispose();
-
-			return cropBmp;
-		}
-		public void button1_Click(object sender, EventArgs e)
-		{
-			Bitmap bmp = new Bitmap(hand_text.Image);
-			Otsu.ApplyOtsuThreshold(ref bmp); // метод Отцу
-			hand_text.Image = bmp;
-			bmp.Save("diplom_black.png", System.Drawing.Imaging.ImageFormat.Png);
-
-			
-			hand_text.Image = Image.FromFile("D:\\VSProjects\\Handwritten_recognition_6\\Handwritten_recognition_6\\bin\\Debug\\diplom_black.png");
-			bool[][] t = Skeletonizator.Image2Bool(hand_text.Image);
-			t = Skeletonizator.ZhangSuenThinning(t);
-			Image img = Skeletonizator.Bool2Image(t);
-			Bitmap bitmap = new Bitmap(img);
-			bitmap.Save("diplom_skeleton.png", System.Drawing.Imaging.ImageFormat.Png);
-		}
-
-		private void открытьToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			Bitmap bitmap;
-			hand_text.AutoSize = true;
-			bitmap = new Bitmap(lenght, weight);
-			OpenFileDialog dialog = new OpenFileDialog();
-			dialog.Filter = "Изображения (*.JPG, *.GIF, *.PNG, *.BMP)|*.jpg;*.gif;*.png;*.bmp;";
-			if (dialog.ShowDialog() == DialogResult.OK)
-			{
-				Image image = Image.FromFile(dialog.FileName);
-				hand_text.Image = new Bitmap(Image.FromFile(dialog.FileName), lenght, weight);
-			}
-			else
-			{
-				hand_text.Image = new Bitmap(hand_text.Width, hand_text.Height);
-				Graphics.FromImage(hand_text.Image).Clear(Color.White);
-				hand_text.Refresh();
-			}
-
-			this.AutoSize = true;
-		}
-
-		private void button2_Click(object sender, EventArgs e)
-		{
-			Bitmap bmp = new Bitmap(hand_text.Image);
+        public static List<int> Find_borders(Image image, int lenght, int weight, int k)
+        {
+			List<int> res = new List<int>();
+			var mc = new Form1();
+			Bitmap bmp = new Bitmap(image);
 			int[,] matrix = new int[bmp.Height, bmp.Width]; // матрица изображения из 0 и 1
 			for (int i = 0; i < bmp.Height; i++)
 			{
@@ -90,7 +40,7 @@ namespace Handwritten_recognition_6
 			}
 			int m = matrix.GetLength(0);
 			int n = matrix.GetLength(1);
-			using (StreamWriter sw = new StreamWriter("Результат.txt"))
+			using (StreamWriter sw = new StreamWriter("Результат_" + k + ".txt"))
 			{
 				for (int i = 0; i < m; i++)
 				{
@@ -148,8 +98,7 @@ namespace Handwritten_recognition_6
 				}
 			}
 
-
-			using (StreamWriter sw = new StreamWriter("Результат_прямоугольник.txt"))
+			using (StreamWriter sw = new StreamWriter("Результат_прямоугольник_" + k + ".txt"))
 			{
 				bool flag = false;
 				for (int i = 0; i < lenght; i++)
@@ -170,11 +119,7 @@ namespace Handwritten_recognition_6
 				}
 			}
 
-			Image cropimage = Crop(hand_text.Image, new Rectangle(left_bord.y, up_bord.x, right_bord.y - left_bord.y, down_bord.x - up_bord.x));
-			Bitmap bitmap = new Bitmap(cropimage);
-			bitmap.Save("diplom_crop.png", System.Drawing.Imaging.ImageFormat.Png);
-
-			textBox1.Text = up_bord.x.ToString() +
+			mc.textBox1.Text = up_bord.x.ToString() +
 			" " + up_bord.y.ToString() +
 			" " + down_bord.x.ToString() +
 			" " + down_bord.y.ToString() +
@@ -183,12 +128,83 @@ namespace Handwritten_recognition_6
 			" " + right_bord.x.ToString() +
 			" " + right_bord.y.ToString();
 
-			Image img = Image.FromFile("D:\\VSProjects\\Handwritten_recognition_6\\Handwritten_recognition_6\\bin\\Debug\\diplom_black.png");
-			using (Graphics gr = Graphics.FromImage(img))
+			res.Add(up_bord.x);
+			res.Add(up_bord.y);
+			res.Add(down_bord.x);
+			res.Add(down_bord.y);
+			res.Add(left_bord.x);
+			res.Add(left_bord.y);
+			res.Add(right_bord.x);
+			res.Add(right_bord.y);
+			return res;
+		}
+        public static Image Crop(Image image, Rectangle selection)
+		{
+			Bitmap bmp = image as Bitmap;
+
+			// Check if it is a bitmap:
+			if (bmp == null)
+				throw new ArgumentException("No valid bitmap");
+
+			// Crop the image:
+			Bitmap cropBmp = bmp.Clone(selection, bmp.PixelFormat);
+
+			// Release the resources:
+			image.Dispose();
+
+			return cropBmp;
+		}
+		public void button1_Click(object sender, EventArgs e)
+		{
+			Bitmap bmp = new Bitmap(hand_text.Image);
+			Otsu.ApplyOtsuThreshold(ref bmp); // метод Отцу
+			hand_text.Image = bmp;
+			bmp.Save("diplom_black.png", System.Drawing.Imaging.ImageFormat.Png);
+
+			
+			hand_text.Image = Image.FromFile("D:\\VSProjects\\Handwritten_recognition_6\\Handwritten_recognition_6\\bin\\Debug\\diplom_black.png");
+			bool[][] t = Skeletonizator.Image2Bool(hand_text.Image);
+			t = Skeletonizator.ZhangSuenThinning(t);
+			Image img = Skeletonizator.Bool2Image(t);
+			Bitmap bitmap = new Bitmap(img);
+			bitmap.Save("diplom_skeleton.png", System.Drawing.Imaging.ImageFormat.Png);
+		}
+
+		private void открытьToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			Bitmap bitmap;
+			hand_text.AutoSize = true;
+			bitmap = new Bitmap(lenght, weight);
+			OpenFileDialog dialog = new OpenFileDialog();
+			dialog.Filter = "Изображения (*.JPG, *.GIF, *.PNG, *.BMP)|*.jpg;*.gif;*.png;*.bmp;";
+			if (dialog.ShowDialog() == DialogResult.OK)
 			{
-				gr.DrawRectangle(new Pen(Color.Red, 2), left_bord.y, up_bord.x, right_bord.y - left_bord.y, down_bord.x - up_bord.x);
+				Image image = Image.FromFile(dialog.FileName);
+				hand_text.Image = new Bitmap(Image.FromFile(dialog.FileName), lenght, weight);
 			}
-			hand_text.Image = img;
+			else
+			{
+				hand_text.Image = new Bitmap(hand_text.Width, hand_text.Height);
+				Graphics.FromImage(hand_text.Image).Clear(Color.White);
+				hand_text.Refresh();
+			}
+
+			this.AutoSize = true;
+		}
+
+		private void button2_Click(object sender, EventArgs e)
+		{
+			List<int> borders = new List<int>();
+			borders = Find_borders(hand_text.Image, lenght, weight, 0);
+			var up_bord = (x: borders[0], y: borders[1]);
+			var down_bord = (x: borders[2], y: borders[3]);
+			var left_bord = (x: borders[4], y: borders[5]);
+			var right_bord = (x: borders[6], y: borders[7]);
+
+			Image cropimage = Crop(hand_text.Image, new Rectangle(left_bord.y, up_bord.x, right_bord.y - left_bord.y, down_bord.x - up_bord.x));
+			Bitmap bitmap = new Bitmap(cropimage);
+			bitmap.Save("diplom_crop.png", System.Drawing.Imaging.ImageFormat.Png);
+
 
 			Bitmap crop_img = new Bitmap("diplom_crop.png");
 			int[,] crop_matrix = new int[crop_img.Height, crop_img.Width]; // матрица изображения из 0 и 1
@@ -306,13 +322,59 @@ namespace Handwritten_recognition_6
 				Console.WriteLine(item);
 			}
 			Image img_crop = Image.FromFile("diplom_crop.png");
+			//Image img = Image.FromFile("D:\\VSProjects\\Handwritten_recognition_6\\Handwritten_recognition_6\\bin\\Debug\\diplom_black.png");
 			for (int i = 0; i < words_borders.Count - 1; i++)
 			{
 				Image img_crop_1 = (Image)img_crop.Clone();
 				Image cropimage_words = Crop(img_crop_1, new Rectangle(words_borders[i], 0, words_borders[i + 1] - words_borders[i], crop_m));
 				Bitmap bitmap1 = new Bitmap(cropimage_words);
+				using (Graphics gr = Graphics.FromImage(img_crop))
+				{
+					gr.DrawRectangle(new Pen(Color.Red, 2), words_borders[i], 0, words_borders[i + 1] - words_borders[i], crop_m);
+				}
 				bitmap1.Save("D:\\VSProjects\\Handwritten_recognition_6\\Handwritten_recognition_6\\bin\\Debug\\Words\\word_" + i + ".png", System.Drawing.Imaging.ImageFormat.Png);
 			}
+			hand_text.Image = img_crop;
+
+			//Image img = Image.FromFile("D:\\VSProjects\\Handwritten_recognition_6\\Handwritten_recognition_6\\bin\\Debug\\diplom_black.png");
+			//using (Graphics gr = Graphics.FromImage(img))
+			//{
+			//	gr.DrawRectangle(new Pen(Color.Red, 2), left_bord.y, up_bord.x, right_bord.y - left_bord.y, down_bord.x - up_bord.x);
+			//}
+			//hand_text.Image = img;
+
+			DirectoryInfo folder;
+			FileInfo[] Images;
+			string path_to_words_folder = "D:\\VSProjects\\Handwritten_recognition_6\\Handwritten_recognition_6\\bin\\Debug\\Words";
+			folder = new DirectoryInfo(path_to_words_folder);
+			Images = folder.GetFiles();
+			for (int i = 0; i < Images.Length; i++)
+            {
+				Image img_tmp = Image.FromFile(path_to_words_folder + "\\" + Images[i].ToString());
+				borders = Find_borders(img_tmp, img_tmp.Height, img_tmp.Width, 1);
+                up_bord = (x: borders[0], y: borders[1]);
+                down_bord = (x: borders[2], y: borders[3]);
+                left_bord = (x: borders[4], y: borders[5]);
+                right_bord = (x: borders[6], y: borders[7]);
+				Image cropimage1 = Crop(img_tmp, new Rectangle(left_bord.y, up_bord.x, right_bord.y - left_bord.y, down_bord.x - up_bord.x));
+				Bitmap bitmap1 = new Bitmap(cropimage1);
+				bitmap1.Save("D:\\VSProjects\\Handwritten_recognition_6\\Handwritten_recognition_6\\bin\\Debug\\Words\\word_" + i + ".png", System.Drawing.Imaging.ImageFormat.Png);
+			}
+			Image img1 = Image.FromFile("D:\\VSProjects\\Handwritten_recognition_6\\Handwritten_recognition_6\\bin\\Debug\\diplom_black.png");
+			
+			//for (int i = 0; i < Images.Length; i++)
+   //         {
+			//	borders = Find_borders(img_tmp, img_tmp.Height, img_tmp.Width);
+			//	up_bord = (x: borders[0], y: borders[1]);
+			//	down_bord = (x: borders[2], y: borders[3]);
+			//	left_bord = (x: borders[4], y: borders[5]);
+			//	right_bord = (x: borders[6], y: borders[7]);
+			//	using (Graphics gr = Graphics.FromImage(img1))
+			//	{
+			//		gr.DrawRectangle(new Pen(Color.Red, 2), left_bord.y, up_bord.x, right_bord.y - left_bord.y, down_bord.x - up_bord.x);
+			//	}
+			//}
+			//hand_text.Image = img1;
 		}
 	}
 }
