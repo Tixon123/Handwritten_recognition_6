@@ -45,6 +45,7 @@ namespace Handwritten_recognition_6
             this.hand_text.Location = new System.Drawing.Point(0, 27);
             this.hand_text.Name = "hand_text";
             this.hand_text.Size = new System.Drawing.Size(186, 110);
+            this.hand_text.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
             this.hand_text.TabIndex = 0;
             this.hand_text.TabStop = false;
             // 

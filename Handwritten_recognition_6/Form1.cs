@@ -322,28 +322,16 @@ namespace Handwritten_recognition_6
 				Console.WriteLine(item);
 			}
 			Image img_crop = Image.FromFile("diplom_crop.png");
-			//Image img = Image.FromFile("D:\\VSProjects\\Handwritten_recognition_6\\Handwritten_recognition_6\\bin\\Debug\\diplom_black.png");
-			for (int i = 0; i < words_borders.Count - 1; i++)
-			{
-				Image img_crop_1 = (Image)img_crop.Clone();
-				Image cropimage_words = Crop(img_crop_1, new Rectangle(words_borders[i], 0, words_borders[i + 1] - words_borders[i], crop_m));
-				Bitmap bitmap1 = new Bitmap(cropimage_words);
-				using (Graphics gr = Graphics.FromImage(img_crop))
-				{
-					gr.DrawRectangle(new Pen(Color.Red, 2), words_borders[i], 0, words_borders[i + 1] - words_borders[i], crop_m);
-				}
-				bitmap1.Save("D:\\VSProjects\\Handwritten_recognition_6\\Handwritten_recognition_6\\bin\\Debug\\Words\\word_" + i + ".png", System.Drawing.Imaging.ImageFormat.Png);
-			}
-			hand_text.Image = img_crop;
+            Image img = Image.FromFile("D:\\VSProjects\\Handwritten_recognition_6\\Handwritten_recognition_6\\bin\\Debug\\diplom_black.png");
+            for (int i = 0; i < words_borders.Count - 1; i++)
+            {
+                Image img_crop_1 = (Image)img_crop.Clone();
+                Image cropimage_words = Crop(img_crop_1, new Rectangle(words_borders[i], 0, words_borders[i + 1] - words_borders[i], crop_m));
+                Bitmap bitmap1 = new Bitmap(cropimage_words);
+                bitmap1.Save("D:\\VSProjects\\Handwritten_recognition_6\\Handwritten_recognition_6\\bin\\Debug\\Words\\word_" + i + ".png", System.Drawing.Imaging.ImageFormat.Png);
+            }
 
-			//Image img = Image.FromFile("D:\\VSProjects\\Handwritten_recognition_6\\Handwritten_recognition_6\\bin\\Debug\\diplom_black.png");
-			//using (Graphics gr = Graphics.FromImage(img))
-			//{
-			//	gr.DrawRectangle(new Pen(Color.Red, 2), left_bord.y, up_bord.x, right_bord.y - left_bord.y, down_bord.x - up_bord.x);
-			//}
-			//hand_text.Image = img;
-
-			DirectoryInfo folder;
+            DirectoryInfo folder;
 			FileInfo[] Images;
 			string path_to_words_folder = "D:\\VSProjects\\Handwritten_recognition_6\\Handwritten_recognition_6\\bin\\Debug\\Words";
 			folder = new DirectoryInfo(path_to_words_folder);
@@ -356,25 +344,22 @@ namespace Handwritten_recognition_6
                 down_bord = (x: borders[2], y: borders[3]);
                 left_bord = (x: borders[4], y: borders[5]);
                 right_bord = (x: borders[6], y: borders[7]);
-				Image cropimage1 = Crop(img_tmp, new Rectangle(left_bord.y, up_bord.x, right_bord.y - left_bord.y, down_bord.x - up_bord.x));
+				using (Graphics gr = Graphics.FromImage(img_crop))
+				{
+					if (words_borders[i] == 0)
+					{
+						gr.DrawRectangle(new Pen(Color.Red, 2), 0, up_bord.x, right_bord.y - left_bord.y, down_bord.x - up_bord.x);
+					}
+					else
+					{
+						gr.DrawRectangle(new Pen(Color.Red, 2), words_borders[i] + left_bord.y, up_bord.x, right_bord.y - left_bord.y, down_bord.x - up_bord.x);
+					}
+				}
+                Image cropimage1 = Crop(img_tmp, new Rectangle(left_bord.y, up_bord.x, right_bord.y - left_bord.y, down_bord.x - up_bord.x));
 				Bitmap bitmap1 = new Bitmap(cropimage1);
 				bitmap1.Save("D:\\VSProjects\\Handwritten_recognition_6\\Handwritten_recognition_6\\bin\\Debug\\Words\\word_" + i + ".png", System.Drawing.Imaging.ImageFormat.Png);
 			}
-			Image img1 = Image.FromFile("D:\\VSProjects\\Handwritten_recognition_6\\Handwritten_recognition_6\\bin\\Debug\\diplom_black.png");
-			
-			//for (int i = 0; i < Images.Length; i++)
-   //         {
-			//	borders = Find_borders(img_tmp, img_tmp.Height, img_tmp.Width);
-			//	up_bord = (x: borders[0], y: borders[1]);
-			//	down_bord = (x: borders[2], y: borders[3]);
-			//	left_bord = (x: borders[4], y: borders[5]);
-			//	right_bord = (x: borders[6], y: borders[7]);
-			//	using (Graphics gr = Graphics.FromImage(img1))
-			//	{
-			//		gr.DrawRectangle(new Pen(Color.Red, 2), left_bord.y, up_bord.x, right_bord.y - left_bord.y, down_bord.x - up_bord.x);
-			//	}
-			//}
-			//hand_text.Image = img1;
+			hand_text.Image = img_crop;
 		}
 	}
 }
